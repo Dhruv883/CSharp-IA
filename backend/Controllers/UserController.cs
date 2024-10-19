@@ -62,19 +62,6 @@ namespace backend.Controllers
 
             return Ok(user);
         }
-            
-        [HttpGet("{accountId}/balance")]
-        public async Task<IActionResult> GetBalance(int accountId)
-        {
-            var account = await _context.Accounts.FindAsync(accountId);
-
-            if (account == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(new { Balance = account.Balance });
-        }
 
         private string HashPassword(string password)
         {
@@ -117,5 +104,18 @@ namespace backend.Controllers
         {
             return new Random().Next(1000000000, 2147483647).ToString("D10");
         }
+    }
+
+    public class RegisterModel
+    {
+        public required string Username { get; set; }
+        public required string Password { get; set; }
+        public required string Email { get; set; }
+    }
+
+    public class LoginModel
+    {
+        public required string Username { get; set; }
+        public required string Password { get; set; }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using backend.Data;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
@@ -63,5 +60,12 @@ namespace backend.Controllers
                 return StatusCode(500, "An error occurred while processing the transaction");
             }
         }
+    }
+
+    public class TransferModel
+    {
+        public int FromAccountId { get; set; }
+        public int ToAccountId { get; set; }
+        public decimal Amount { get; set; }
     }
 }
