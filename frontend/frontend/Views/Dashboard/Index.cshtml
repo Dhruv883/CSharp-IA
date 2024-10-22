@@ -1,0 +1,65 @@
+﻿<!-- Index.cshtml -->
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="stat-card bg-primary text-white">
+            <h3>@ViewBag.TotalAccounts</h3>
+            <p>Total Accounts</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-success text-white">
+            <h3>$@ViewBag.TotalBalance</h3>
+            <p>Total Balance</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-warning text-white">
+            <h3>@ViewBag.PendingTransactions</h3>
+            <p>Pending Transactions</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-danger text-white">
+            <h3>@ViewBag.AlertCount</h3>
+            <p>Active Alerts</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="dashboard-card">
+            <h4>Recent Transactions</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Account</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var transaction in Model.RecentTransactions)
+                    {
+                        <tr>
+                            <td>@transaction.Id</td>
+                            <td>@transaction.AccountNumber</td>
+                            <td>@transaction.Type</td>
+                            <td>$@transaction.Amount</td>
+                            <td>@transaction.Date</td>
+                            <td>@transaction.Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

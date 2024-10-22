@@ -1,0 +1,62 @@
+﻿@model BankManagement.Models.CreateTransactionViewModel
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Create New Transaction</h4>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("Create", "Transaction", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.TransactionType)
+                            @Html.DropDownListFor(m => m.TransactionType,
+                                new SelectList(new[] { "Transfer", "Deposit", "Withdrawal" }),
+                                "Select Type", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.TransactionType, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mt-3">
+                            @Html.LabelFor(m => m.Amount)
+                            @Html.TextBoxFor(m => m.Amount, new { @class = "form-control", type = "number", step = "0.01" })
+                            @Html.ValidationMessageFor(m => m.Amount, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mt-3" id="recipientAccountDiv">
+                            @Html.LabelFor(m => m.RecipientAccount)
+                            @Html.TextBoxFor(m => m.RecipientAccount, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.RecipientAccount, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group mt-3">
+                            @Html.LabelFor(m => m.Description)
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "3" })
+                            @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-3">Submit Transaction</button>
+                        <a href="@Url.Action("Index", "Dashboard")" class="btn btn-secondary mt-3">Cancel</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#TransactionType').change(function() {
+                var type = $(this).val();
+                if (type === 'Transfer') {
+                    $('#recipientAccountDiv').show();
+                } else {
+                    $('#recipientAccountDiv').hide();
+                }
+            });
+        });
+    </script>
+}
