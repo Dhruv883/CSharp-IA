@@ -1,0 +1,62 @@
+﻿@model BankManagement.Models.TransactionHistoryViewModel
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4>Transaction History</h4>
+                <div>
+                    @using (Html.BeginForm("History", "Transaction", FormMethod.Get))
+                    {
+                        <div class="input-group">
+                            @Html.TextBox("dateFrom", null, new { @class = "form-control", type = "date" })
+                            @Html.TextBox("dateTo", null, new { @class = "form-control", type = "date" })
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Transaction ID</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var transaction in Model.Transactions)
+                        {
+                            <tr>
+                                <td>@transaction.Date.ToString("MM/dd/yyyy HH:mm")</td>
+                                <td>@transaction.TransactionId</td>
+                                <td>@transaction.Type</td>
+                                <td class="@(transaction.Type == "Credit" ? "text-success" : "text-danger")">
+                                    @(transaction.Type == "Credit" ? "+" : "-")$@transaction.Amount.ToString("N2")
+                                </td>
+                                <td>
+                                    <span class="badge bg-@(transaction.Status == "Completed" ? "success" : "warning")">
+                                        @transaction.Status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                    Showing @Model.Transactions.Count transactions
+                </div>
+                <div>
+                    <!-- Add pagination controls here if needed -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

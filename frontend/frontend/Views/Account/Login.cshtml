@@ -1,0 +1,37 @@
+﻿@model BankManagement.Models.LoginViewModel
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">Login</h3>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Email)
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group mt-3">
+                            @Html.LabelFor(m => m.Password)
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group mt-3">
+                            @Html.CheckBoxFor(m => m.RememberMe)
+                            @Html.LabelFor(m => m.RememberMe)
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Login</button>
+                    }
+                    <div class="text-center mt-3">
+                        <a href="@Url.Action("Register", "Account")">Don't have an account? Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
