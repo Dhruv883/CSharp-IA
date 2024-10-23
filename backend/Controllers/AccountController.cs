@@ -101,13 +101,5 @@ namespace backend.Controllers
         }
     }
 
-    public class CreateAccountModel
-    {
-        public int UserId { get; set; }
-    }
-
-    public class TransactionModel
-    {
-        public decimal Amount { get; set; }
-    }
+   
 }

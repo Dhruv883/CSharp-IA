@@ -7,9 +7,7 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace backend.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class UserController : Controller
     {
         private readonly ApplicationDbContext _context;
 
@@ -18,17 +16,26 @@ namespace backend.Controllers
             _context = context;
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        // GET: /User/Register
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        // POST: /User/Register
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterModel model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return View(model);
             }
 
             if (await _context.Users.AnyAsync(u => u.Username == model.Username))
             {
-                return BadRequest("Username already exists");
+                ModelState.AddModelError("Username", "Username already exists");
+                return View(model);
             }
 
             var user = new User
@@ -42,25 +49,41 @@ namespace backend.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok( user );
+            // Add a success message
+            TempData["SuccessMessage"] = "Registration successful!";
+
+            // Redirect to login page
+            return RedirectToAction("Login");
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        // GET: /User/Login
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        // POST: /User/Login
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginModel model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return View(model);
             }
+
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
-
-
             if (user == null || !VerifyPassword(model.Password, user.Password))
             {
-                return Unauthorized();
+                ModelState.AddModelError("", "Invalid username or password");
+                return View(model);
             }
 
-            return Ok(user);
+            // Add success message
+            TempData["SuccessMessage"] = "Login successful!";
+
+            // Redirect to home page or dashboard
+            return RedirectToAction("Index", "Home");
         }
 
         private string HashPassword(string password)
@@ -104,18 +127,5 @@ namespace backend.Controllers
         {
             return new Random().Next(1000000000, 2147483647).ToString("D10");
         }
-    }
-
-    public class RegisterModel
-    {
-        public required string Username { get; set; }
-        public required string Password { get; set; }
-        public required string Email { get; set; }
-    }
-
-    public class LoginModel
-    {
-        public required string Username { get; set; }
-        public required string Password { get; set; }
     }
 }
