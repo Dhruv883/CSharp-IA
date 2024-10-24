@@ -14,5 +14,8 @@
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
         public string Status { get; set; }
+
+        public string FromAccountId { get; set; } // Add this line
+        public string ToAccountId { get; set; }
     }
 }

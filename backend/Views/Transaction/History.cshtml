@@ -109,8 +109,8 @@
                                                 <td>@transaction.Date.ToString("MM/dd/yyyy HH:mm")</td>
                                                 <td>@transaction.TransactionId</td>
                                                 <td>@transaction.Type</td>
-                                                <td class="@(transaction.Type == "Credit" ? "text-success" : "text-danger")">
-                                                    @(transaction.Type == "Credit" ? "+" : "-")$@transaction.Amount.ToString("N2")
+                                                <td class="")">
+                                                    $@transaction.Amount.ToString("N2")
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-@(transaction.Status == "Completed" ? "success" : "warning")">

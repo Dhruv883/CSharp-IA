@@ -12,47 +12,49 @@ public class AccountController : Controller
         _context = context;
     }
     [HttpGet]
-    public IActionResult AccountDetailsView()
+public IActionResult AccountDetailsView()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get the logged-in user's ID
+    if (userId == null)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get the logged-in user's ID
-        if (userId == null)
-        {
-            return Unauthorized();
-        }
-
-        // Convert userId to int if needed
-        int parsedUserId = int.Parse(userId);
-        var account = _context.Accounts.FirstOrDefault(a => a.UserId == parsedUserId);
-
-        if (account == null)
-        {
-            // If no account exists, redirect to account creation page
-            return RedirectToAction("Create", "Account");
-        }
-
-        if(account.User == null)
-        {
-            return BadRequest("User NOt found");
-        }
-
-        // Populate the AccountDetailsViewModel with data
-        var accountDetailsViewModel = new AccountDetailsViewModel
-        {
-            AccountHolder = account.User.Username, // Assuming the User entity has a 'Name' field
-            AccountNumber = account.AccountNumber,
-            Balance = account.Balance,
-            AccountType = account.AccountType,
-            Status = "Active", // You can set the status based on business logic
-            RecentTransactions = _context.Transactions
-                .Where(t => t.FromAccountId == account.Id || t.ToAccountId == account.Id)
-                .OrderByDescending(t => t.Timestamp)
-                .Take(5) // Show the last 5 transactions
-                .ToList()
-        };
-
-        // Pass the model to the view
-        return View(accountDetailsViewModel);
+        return Unauthorized();
     }
+
+    int parsedUserId = int.Parse(userId);
+    var account = _context.Accounts.FirstOrDefault(a => a.UserId == parsedUserId);
+
+    if (account == null)
+    {
+        // If no account exists, redirect to account creation page
+        return RedirectToAction("Create", "Account");
+    }
+
+    // Fetch the User manually based on UserId
+    var user = _context.Users.FirstOrDefault(u => u.Id == account.UserId);
+    if (user == null)
+    {
+        return BadRequest("User not found");
+    }
+
+    // Populate the AccountDetailsViewModel with data
+    var accountDetailsViewModel = new AccountDetailsViewModel
+    {
+        AccountHolder = user.Username, // Assuming the User entity has a 'Username' field
+        AccountNumber = account.AccountNumber,
+        Balance = account.Balance,
+        AccountType = account.AccountType,
+        Status = "Active", // You can set the status based on business logic
+        RecentTransactions = _context.Transactions
+            .Where(t => t.FromAccountId == account.AccountNumber || t.ToAccountId == account.AccountNumber)
+            .OrderByDescending(t => t.Timestamp)
+            .Take(5) // Show the last 5 transactions
+            .ToList()
+    };
+
+    // Pass the model to the view
+    return View(accountDetailsViewModel);
+}
+
 
 
 

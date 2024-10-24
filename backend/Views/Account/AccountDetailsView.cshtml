@@ -10,7 +10,7 @@
                 <div class="card-body">
                     <h5 class="card-title">@Model.AccountHolder</h5>
                     <p class="card-text">Account Number: @Model.AccountNumber</p>
-                    <p class="card-text">Balance: $@Model.Balance.ToString("N2")</p>
+                    <p class="card-text">Balance: ₹@Model.Balance.ToString("N2")</p>
                     <p class="card-text">Account Type: @Model.AccountType</p>
                     <p class="card-text">Status: @Model.Status</p>
                 </div>
@@ -22,7 +22,7 @@
                     <h4>Quick Actions</h4>
                 </div>
                 <div class="card-body">
-                    <a href="@Url.Action("Create", "Transaction")" class="btn btn-primary me-2">New Transaction</a>
+                    <a href="@Url.Action("Add", "Transaction")" class="btn btn-primary me-2">New Transaction</a>
                     <a href="@Url.Action("History", "Transaction")" class="btn btn-secondary me-2">Transaction History</a>
                 </div>
             </div>
@@ -47,7 +47,7 @@
                                     <td>@transaction.Timestamp.ToString("g")</td>
                                     <td>@transaction.FromAccountId</td>
                                     <td>@transaction.ToAccountId</td>
-                                    <td>$@transaction.Amount.ToString("N2")</td>
+                                    <td>₹ @transaction.Amount.ToString("N2")</td>
                                     <td>@transaction.Status</td>
                                 </tr>
                             }

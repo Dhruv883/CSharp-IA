@@ -125,7 +125,14 @@ namespace backend.Controllers
 
             return View(model); // Pass the model to the view
         }
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["SuccessMessage"] = "You have been logged out.";
+            return RedirectToAction("Login", "User"); // Redirect to the login page
+        }
 
         private string HashPassword(string password)
         {

@@ -5,4 +5,10 @@
         <a href="@Url.Action("AccountDetailsView", "Account")"><i class="fas fa-users"></i> Accounts</a>
         <a href="@Url.Action("History", "Transaction")"><i class="fas fa-exchange-alt"></i> Transactions</a>
     </nav>
+    <div class="mt-auto">
+        <!-- Logout Button -->
+        <form asp-controller="User" asp-action="Logout" method="post" id="logoutForm">
+            <button type="submit" class="btn btn-danger btn-block">Logout</button>
+        </form>
+    </div>
 </div>

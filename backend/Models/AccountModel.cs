@@ -11,7 +11,5 @@ namespace backend.Models
         public decimal Balance { get; set; }
         public string AccountType { get; set; }
         public DateTime CreatedAt { get; set; }
-        [ForeignKey("UserId")]
-        public virtual User User { get; set; }
     }
 }

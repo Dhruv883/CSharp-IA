@@ -13,9 +13,11 @@ namespace backend.Data
         public DbSet<User> Users { get; set; }
         public DbSet<AccountModel> Accounts { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Define the relationship
+
+            // Define the relationship between Transaction and User
             modelBuilder.Entity<Transaction>()
                 .HasOne<User>() // Specify the relationship type
                 .WithMany(u => u.Transactions) // Link back to the User's Transactions
@@ -23,5 +25,4 @@ namespace backend.Data
                 .OnDelete(DeleteBehavior.Cascade); // Optionally set delete behavior
         }
     }
-
 }

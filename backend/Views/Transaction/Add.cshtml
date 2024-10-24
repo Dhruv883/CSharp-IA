@@ -1,0 +1,73 @@
+﻿@model TransferModel
+
+@{
+    ViewBag.Title = "Create Transaction";
+}
+
+<h2>Create New Transaction</h2>
+
+<!-- Display validation summary if there are any validation errors -->
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<form id="transferForm">
+    <div class="form-group">
+        <label asp-for="FromAccountId" class="control-label">From Account</label>
+        <input asp-for="FromAccountId" class="form-control" id="FromAccountId" />
+        <span asp-validation-for="FromAccountId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ToAccountId" class="control-label">To Account</label>
+        <input asp-for="ToAccountId" class="form-control" id="ToAccountId" />
+        <span asp-validation-for="ToAccountId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Amount" class="control-label">Amount</label>
+        <input asp-for="Amount" class="form-control" id="Amount" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="button" value="Transfer" class="btn btn-primary" onclick="submitTransfer()" />
+    </div>
+</form>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        function submitTransfer() {
+            var fromAccountId = $('#FromAccountId').val();  // Keep as string
+            var toAccountId = $('#ToAccountId').val();      // Keep as string
+            var amount = parseFloat($('#Amount').val());    // Ensure amount is a number
+
+            // Add validation to ensure all fields are filled
+            if (!fromAccountId || !toAccountId || isNaN(amount) || amount <= 0) {
+                alert("Please enter valid values for the transaction.");
+                return;  // Prevent submission if validation fails
+            }
+            var transferData = {
+                FromAccountId: fromAccountId,
+                ToAccountId: toAccountId,
+                Amount: amount
+            };
+
+            console.log(transferData); // Log to check data before sending
+
+            $.ajax({
+                url: '/transfer',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(transferData),
+                success: function (response) {
+                    alert('Transfer successful: ' + response.message);
+                },
+                error: function (error) {
+                    alert('Error: ' + error.responseText);
+                }
+            });
+        }
+
+    </script>
+}

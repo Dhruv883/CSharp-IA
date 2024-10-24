@@ -20,7 +20,7 @@
                     <select asp-for="AccountType" class="form-control" required>
                         <option value="">Select Account Type</option>
                         <option value="Savings">Savings</option>
-                        <option value="Checking">Checking</option>
+                        <option value="Current">Current</option>
                     </select>
                     <span asp-validation-for="AccountType" class="text-danger"></span>
                 </div>
@@ -28,7 +28,7 @@
                 <div class="form-group mb-3">
                     <label asp-for="InitialDeposit" class="form-label">Initial Deposit (Optional)</label>
                     <div class="input-group">
-                        <span class="input-group-text">$</span>
+                        <span class="input-group-text">₹</span>
                         <input asp-for="InitialDeposit"
                                type="number"
                                class="form-control"
@@ -51,9 +51,9 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Add custom validation if needed
-            $('form').submit(function(e) {
+            $('form').submit(function (e) {
                 var accountType = $('#AccountType').val();
                 if (!accountType) {
                     e.preventDefault();
