@@ -1,12 +1,13 @@
 ﻿using backend.Data;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TransactionController : ControllerBase
+    public class TransactionController : Controller
     {
         private readonly ApplicationDbContext _context;
 
@@ -14,6 +15,33 @@ namespace backend.Controllers
         {
             _context = context;
         }
+        [HttpGet("History")]
+        public async Task<IActionResult> History(DateTime? dateFrom, DateTime? dateTo)
+        {
+            var transactions = await _context.Transactions
+                .Where(t => (!dateFrom.HasValue || t.Timestamp >= dateFrom.Value.ToUniversalTime()) && (!dateTo.HasValue || t.Timestamp <= dateTo.Value.ToUniversalTime()))
+                .OrderByDescending(t => t.Timestamp)
+                .Select(t => new TransactionViewModel
+                {
+                    TransactionId = t.Id,
+                    Type = t.Type,
+                    Amount = t.Amount,
+                    Date = t.Timestamp,
+                    Status = t.Status
+                })
+                .ToListAsync();
+
+            var model = new TransactionHistoryViewModel
+            {
+                Transactions = transactions,
+                DateFrom = dateFrom,
+                DateTo = dateTo
+            };
+
+            return View(model);  // Adjust if using Razor Pages
+        }
+
+
 
         [HttpPost("transfer")]
         public async Task<IActionResult> TransferMoney([FromBody] TransferModel model)

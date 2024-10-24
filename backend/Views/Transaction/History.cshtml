@@ -1,0 +1,147 @@
+﻿@model backend.Models.TransactionHistoryViewModel
+
+@{
+    ViewData["Title"] = "Transaction History";
+}
+
+@section Scripts {
+    <script src="~/Scripts/jquery-3.6.0.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <!-- Add any additional scripts needed for this specific view -->
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Bank Management System</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/site.css" rel="stylesheet" />
+    <style>
+        /* Sidebar styles */
+        .sidebar {
+            height: 100vh;
+            background-color: #2c3e50;
+            color: white;
+            padding-top: 20px;
+        }
+
+            .sidebar a {
+                color: white;
+                padding: 10px 20px;
+                display: block;
+            }
+
+                .sidebar a:hover {
+                    background-color: #34495e;
+                    text-decoration: none;
+                }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .dashboard-card, .card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .table-responsive {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Include the Sidebar -->
+            @await Html.PartialAsync("_Sidebar")
+
+            <!-- Main Content -->
+            <div class="col-md-10 main-content">
+                <h1>@ViewData["Title"]</h1>
+                <!-- Transaction History Content -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4>Transaction History</h4>
+                            <div>
+                                @using (Html.BeginForm("History", "Transaction", FormMethod.Get))
+                                {
+                                    <div class="input-group">
+                                        @Html.TextBox("dateFrom", Model.DateFrom.HasValue ? Model.DateFrom.Value.ToString("yyyy-MM-dd") : null, new { @class = "form-control", type = "date" })
+                                        @Html.TextBox("dateTo", Model.DateTo.HasValue ? Model.DateTo.Value.ToString("yyyy-MM-dd") : null, new { @class = "form-control", type = "date" })
+                                        <button type="submit" class="btn btn-primary">Filter</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Transaction ID</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Transactions != null && Model.Transactions.Any())
+                                    {
+                                        foreach (var transaction in Model.Transactions)
+                                        {
+                                            <tr>
+                                                <td>@transaction.Date.ToString("MM/dd/yyyy HH:mm")</td>
+                                                <td>@transaction.TransactionId</td>
+                                                <td>@transaction.Type</td>
+                                                <td class="@(transaction.Type == "Credit" ? "text-success" : "text-danger")">
+                                                    @(transaction.Type == "Credit" ? "+" : "-")$@transaction.Amount.ToString("N2")
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-@(transaction.Status == "Completed" ? "success" : "warning")">
+                                                        @transaction.Status
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="5" class="text-center">No transactions found for the selected dates.</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                Showing @Model.Transactions.Count transactions
+                            </div>
+                            <div>
+                                <!-- Add pagination controls here if needed -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
