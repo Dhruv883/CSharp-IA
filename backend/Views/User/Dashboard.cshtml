@@ -1,0 +1,140 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+@section Scripts {
+    <script src="~/Scripts/jquery-3.6.0.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <!-- Add any additional scripts needed for this specific view -->
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Bank Management System</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/site.css" rel="stylesheet" />
+    <style>
+        /* Sidebar styles */
+        .sidebar {
+            height: 100vh;
+            background-color: #2c3e50;
+            color: white;
+            padding-top: 20px;
+        }
+
+            .sidebar a {
+                color: white;
+                padding: 10px 20px;
+                display: block;
+            }
+
+                .sidebar a:hover {
+                    background-color: #34495e;
+                    text-decoration: none;
+                }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .dashboard-card {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+            .stat-card h3 {
+                margin: 0;
+                font-size: 24px;
+            }
+
+            .stat-card p {
+                margin: 5px 0 0;
+                color: #666;
+            }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Include the Sidebar -->
+            @await Html.PartialAsync("_Sidebar")
+
+            <!-- Main Content -->
+            <div class="col-md-10 main-content">
+                <h1>@ViewData["Title"]</h1>
+                <!-- Your main dashboard content goes here -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-card bg-primary text-white">
+                            <h3>@Model.TotalAccounts</h3>
+                            <p>Total Accounts</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card bg-success text-white">
+                            <h3>$@Model.TotalBalance</h3>
+                            <p>Total Balance</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-8">
+                        <div class="dashboard-card">
+                            <h4>Recent Transactions</h4>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Transaction ID</th>
+                                        <th>Account</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.RecentTransactions != null && Model.RecentTransactions.Count > 0)
+                                    {
+                                        foreach (var transaction in Model.RecentTransactions)
+                                        {
+                                            <tr>
+                                                <td>@transaction.Id</td>
+                                                <td>@transaction.FromAccountId</td>
+                                                <td>@transaction.Type</td>
+                                                <td>₹@transaction.Amount</td>
+                                                <td>@transaction.Timestamp.ToString("g")</td> <!-- Use appropriate formatting -->
+                                                <td>@transaction.Status</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-center">No recent transactions found.</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

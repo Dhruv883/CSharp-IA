@@ -1,0 +1,22 @@
+﻿@model backend.Models.CreateAccountModel
+
+<div class="container mt-4">
+    <h4>Create New Account</h4>
+
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <label for="AccountType">Account Type</label>
+            <select id="AccountType" asp-for="AccountType" class="form-control">
+                <option value="Savings">Savings</option>
+                <option value="Checking">Checking</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="InitialBalance">Initial Deposit</label>
+            <input type="number" asp-for="Balance" class="form-control" step="0.01" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Account</button>
+    </form>
+</div>

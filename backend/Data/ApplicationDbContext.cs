@@ -11,8 +11,17 @@ namespace backend.Data
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Account> Accounts { get; set; }
+        public DbSet<AccountModel> Accounts { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Define the relationship
+            modelBuilder.Entity<Transaction>()
+                .HasOne<User>() // Specify the relationship type
+                .WithMany(u => u.Transactions) // Link back to the User's Transactions
+                .HasForeignKey(t => t.UserId) // Specify the foreign key
+                .OnDelete(DeleteBehavior.Cascade); // Optionally set delete behavior
+        }
     }
 
 }

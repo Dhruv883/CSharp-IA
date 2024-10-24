@@ -4,6 +4,10 @@ using backend.Data;
 using backend.Models;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace backend.Controllers
 {
@@ -81,10 +85,47 @@ namespace backend.Controllers
 
             // Add success message
             TempData["SuccessMessage"] = "Login successful!";
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Username), // Store the username in the claims
+                new Claim(ClaimTypes.Email, user.Email),   // Store the email in the claims
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) // Store the user ID in claims
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Sign the user in
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
 
             // Redirect to home page or dashboard
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Dashboard", "User");
         }
+        public async Task<IActionResult> Dashboard()
+        {
+            var username = User.FindFirst(ClaimTypes.Name)?.Value;
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login"); // Redirect if user not found
+            }
+
+            var model = new UserDashboardViewModel
+            {
+                Username = user.Username,
+                Email = user.Email,
+                TotalAccounts = await _context.Accounts.CountAsync(a => a.UserId == user.Id),
+                TotalBalance = await _context.Accounts.Where(a => a.UserId == user.Id).SumAsync(a => a.Balance),
+                RecentTransactions = await _context.Transactions // Fetch recent transactions
+                                            .Where(t => t.UserId == user.Id) // Assuming a UserId property exists in Transaction
+                                            .OrderByDescending(t => t.Timestamp)
+                                            .Take(10) // Get the latest 10 transactions
+                                            .ToListAsync() // Convert to list
+            };
+
+            return View(model); // Pass the model to the view
+        }
+
 
         private string HashPassword(string password)
         {
