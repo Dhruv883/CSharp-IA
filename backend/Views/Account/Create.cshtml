@@ -1,22 +1,67 @@
 ﻿@model backend.Models.CreateAccountModel
 
 <div class="container mt-4">
-    <h4>Create New Account</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Create New Account</h4>
 
-    <form asp-action="Create" method="post">
-        <div class="form-group">
-            <label for="AccountType">Account Type</label>
-            <select id="AccountType" asp-for="AccountType" class="form-control">
-                <option value="Savings">Savings</option>
-                <option value="Checking">Checking</option>
-            </select>
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="form-group mb-3">
+                    <label asp-for="AccountType" class="form-label">Account Type</label>
+                    <select asp-for="AccountType" class="form-control" required>
+                        <option value="">Select Account Type</option>
+                        <option value="Savings">Savings</option>
+                        <option value="Checking">Checking</option>
+                    </select>
+                    <span asp-validation-for="AccountType" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="InitialDeposit" class="form-label">Initial Deposit (Optional)</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input asp-for="InitialDeposit"
+                               type="number"
+                               class="form-control"
+                               step="0.01"
+                               min="0"
+                               placeholder="0.00" />
+                    </div>
+                    <span asp-validation-for="InitialDeposit" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
         </div>
-
-        <div class="form-group">
-            <label for="InitialBalance">Initial Deposit</label>
-            <input type="number" asp-for="Balance" class="form-control" step="0.01" />
-        </div>
-
-        <button type="submit" class="btn btn-primary">Create Account</button>
-    </form>
+    </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Add custom validation if needed
+            $('form').submit(function(e) {
+                var accountType = $('#AccountType').val();
+                if (!accountType) {
+                    e.preventDefault();
+                    alert('Please select an account type');
+                    return false;
+                }
+                return true;
+            });
+        });
+    </script>
+}
